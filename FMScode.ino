@@ -1,4 +1,4 @@
-//Library
+//Library-------------------------------------------------------------------------------------
 #include "ThingSpeak.h"
 #include <ThingSpeak.h>
 #include <ESP8266WiFi.h>
@@ -9,9 +9,11 @@
 
 const int trigPin1 = D0;
 const int echoPin1 = D1;
-const int redled = D4; //Red LED is D4
 const int grnled = D2; //Green LED is D2
+const int redled = D4; //Red LED is D4
 const int BUZZER = D5;  //Buzzer
+long duration1;
+int distance1;
 
 //Credentials---------------------------------------------------------------------------------
 
@@ -30,16 +32,16 @@ const unsigned long period = 10000;
 //To connect node mcu to the internet---------------------------------------------------------
 
 WiFiClient  client;
-long duration1;
-int distance1;
 
+//---------------------------------------------------------------------------------------------
 void setup()
 {
   pinMode(trigPin1, OUTPUT);
   pinMode(echoPin1, INPUT);
   pinMode(redled, OUTPUT);
   pinMode(grnled, OUTPUT);
-
+  pinMode(BUZZER , OUTPUT);
+  
   Serial.begin(9600);
   WiFi.begin(ssid, pass);
   while (WiFi.status() != WL_CONNECTED)
@@ -52,7 +54,7 @@ void setup()
   ThingSpeak.begin(client);   //connecting thingspeak
   startMillis = millis();  //initial start time
 }
-
+//-----------------------------------------------------------------------------------------------
 void loop()
 {
   digitalWrite(redled, LOW);
@@ -81,6 +83,9 @@ void loop()
     digitalWrite(D2, HIGH);             //Green Led Low
     digitalWrite(D4, LOW);              //Red led Low
     digitalWrite(BUZZER, LOW);          //Buzzer low
+    delay(500);
+    Serial.print("2 Distance: ");
+    Serial.println(distance1);
   }
   currentMillis = millis();
   if (currentMillis - startMillis >= period)
