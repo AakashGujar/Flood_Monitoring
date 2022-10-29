@@ -7,13 +7,13 @@
 
 //Defining LED, Buzzer aur ye Ultrasonic sensor------------------------------------------------
 
-const int trigPin1 = D0;
-const int echoPin1 = D1;
+const int trigPin = D0;
+const int echoPin = D1;
 const int grnled = D2; //Green LED is D2
-const int redled = D4; //Red LED is D4
+const int redled = D3; //Red LED is D3
 const int BUZZER = D5;  //Buzzer
-long duration1;
-int distance1;
+long duration;
+int distance;
 
 //Credentials---------------------------------------------------------------------------------
 
@@ -36,8 +36,8 @@ WiFiClient  client;
 //---------------------------------------------------------------------------------------------
 void setup()
 {
-  pinMode(trigPin1, OUTPUT);
-  pinMode(echoPin1, INPUT);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
   pinMode(redled, OUTPUT);
   pinMode(grnled, OUTPUT);
   pinMode(BUZZER , OUTPUT);
@@ -60,37 +60,37 @@ void loop()
   digitalWrite(redled, LOW);
   digitalWrite(grnled, LOW);
   
-  digitalWrite(trigPin1, LOW);
+  digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
-  digitalWrite(trigPin1, HIGH);
+  digitalWrite(trigPin, HIGH);
   delayMicroseconds(10);
-  digitalWrite(trigPin1, LOW);
-  duration1 = pulseIn(echoPin1, HIGH);
-  distance1 = duration1 * 0.034 / 2;
+  digitalWrite(trigPin, LOW);
+  duration = pulseIn(echoPin, HIGH);
+  distance = duration * 0.034 / 2;
   
   
   if (distance1 <= 4)
   {
-    digitalWrite(D4, HIGH);             //Red led High
+    digitalWrite(D3, HIGH);             //Red led High
     digitalWrite(D2, LOW);              //Green Led Low
     digitalWrite(BUZZER, HIGH);         //Buzzer low
     delay(500);
     Serial.print("1 Distance: ");
-    Serial.println(distance1);
+    Serial.println(distance);
   }
   else
   {
     digitalWrite(D2, HIGH);             //Green Led Low
-    digitalWrite(D4, LOW);              //Red led Low
+    digitalWrite(D3, LOW);              //Red led Low
     digitalWrite(BUZZER, LOW);          //Buzzer low
     delay(500);
     Serial.print("2 Distance: ");
-    Serial.println(distance1);
+    Serial.println(distance);
   }
   currentMillis = millis();
   if (currentMillis - startMillis >= period)
   {
-    ThingSpeak.setField(1, distance1);
+    ThingSpeak.setField(1, distance);
     ThingSpeak.writeFields(ch_no, write_api);
     startMillis = currentMillis;
   }
