@@ -3,23 +3,21 @@
 #include <ThingSpeak.h>
 #include <ESP8266WiFi.h>
 
+//Defining LED, Buzzer and Ultrasonic sensor------------------------------------------------
 
-
-//Defining LED, Buzzer aur ye Ultrasonic sensor------------------------------------------------
-
-const int trigPin1 = D0;
-const int echoPin1 = D1;
-const int redled = D4; //Red LED is D4
-const int grnled = D2; //Green LED is D2
-const int BUZZER = D5;  //Buzzer
+const int trigPin = D0;
+const int echoPin = D1;
+const int redled = D2; //Red LED is D4
+const int grnled = D3; //Green LED is D2
+const int BUZZER = D4;  //Buzzer
 
 //Credentials---------------------------------------------------------------------------------
 
 unsigned long ch_no = 1883335;  //Thingspeak's Channel ID
 const char * write_api = "JTSIIO9WVFTYJDZ8";  //Thingspeak write API
 char auth[] = "mwa0000027801576"; //Author of ThingSpeak
-char ssid[] = "Gujar Home";
-char pass[] = "msaagggg";
+char ssid[] = "Bexst";
+char pass[] = "yoangelo";
 
 //variables defined for timing purpose--------------------------------------------------------
 
@@ -30,17 +28,16 @@ const unsigned long period = 10000;
 //To connect node mcu to the internet---------------------------------------------------------
 
 WiFiClient  client;
-long duration1;
-int distance1;
+long duration;
+int distance;
 
 void setup()
 {
-  pinMode(trigPin1, OUTPUT);
-  pinMode(echoPin1, INPUT);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
   pinMode(redled, OUTPUT);
   pinMode(grnled, OUTPUT);
-  digitalWrite(redled, LOW);
-  digitalWrite(grnled, LOW);
+  pinMode(BUZZER, OUTPUT);
   Serial.begin(9600);
   WiFi.begin(ssid, pass);
   while (WiFi.status() != WL_CONNECTED)
@@ -56,31 +53,40 @@ void setup()
 
 void loop()
 {
-  digitalWrite(trigPin1, LOW);
+  digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
-  digitalWrite(trigPin1, HIGH);
+  digitalWrite(trigPin, HIGH);
   delayMicroseconds(10);
-  digitalWrite(trigPin1, LOW);
-  duration1 = pulseIn(echoPin1, HIGH);
-  distance1 = duration1 * 0.034 / 2;
-  Serial.println(distance1);
-  if (distance1 <= 4)
+  digitalWrite(trigPin, LOW);
+  digitalWrite(redled, LOW);
+  digitalWrite(grnled, LOW);
+  digitalWrite(BUZZER, LOW);
+  duration = pulseIn(echoPin, HIGH);
+  distance = duration * 0.034 / 2;
+  Serial.println(distance);
+  
+  if (distance <= 4)
   {
-    digitalWrite(D4, HIGH);
-    tone(BUZZER, 300);
+    digitalWrite(D3, HIGH);
     digitalWrite(D2, LOW);
-    delay(1500);
-    noTone(BUZZER);
+    digitalWrite(BUZZER,HIGH);
+    delay(500);
+    Serial.print("1 Distance: ");
+    Serial.println(distance);
   }
   else
   {
     digitalWrite(D2, HIGH);
-    digitalWrite(D4, LOW);
+    digitalWrite(D3, LOW);
+    digitalWrite(BUZZER, LOW);
+    delay(500);
+    Serial.print("2 Distance: ");
+    Serial.println(distance);
   }
   currentMillis = millis();
   if (currentMillis - startMillis >= period)
   {
-    ThingSpeak.setField(1, distance1);
+    ThingSpeak.setField(1, distance);
     ThingSpeak.writeFields(ch_no, write_api);
     startMillis = currentMillis;
   }
